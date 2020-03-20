@@ -25,7 +25,7 @@ function findById(id) {
 function findTasks(id) {
     return db("tasks as t")
         .join("projects as p", "p.id", "t.project_id")
-        .select("p.name", "t.task_number", "t.description", "t.completed")
+        .select("p.name as project_name", "t.task_number", "t.description", "t.notes", "t.completed")
         .where("t.project_id", id)
         .orderBy("t.task_number")
 }
@@ -46,7 +46,7 @@ function addProject(project) {
 }
 
 function addResource(resource, id) {
-    const addedRes = {...resource, id}
+    const addedRes = {...resource, project_id: id}
     return db("resources")
         .insert(addedRes)
         .then(() => {
@@ -55,7 +55,7 @@ function addResource(resource, id) {
 }
 
 function addTask(task, id) {
-    const addedTask = {...task, id}
+    const addedTask = {...task, project_id: id}
     return db("tasks")
         .insert(addedTask)
         .then(() => {

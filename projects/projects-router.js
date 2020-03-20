@@ -23,7 +23,7 @@ router.get('/:id', (req, res) => {
         })
         .catch(err => {
             console.log(err)
-            res.status(500).json({ message: "cannot retrieve project" })
+            res.status(500).json({ message: "cannot retreive project" })
         })
 })
 
@@ -56,15 +56,49 @@ router.get('/:id/tasks', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-
+    const newProject = req.body
+    Projects.addProject(newProject)
+        .then(project => {
+            res.status(201).json(project)
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ message: "could not add project" })
+        })
 })
 
 router.post('/:id/resources', (req, res) => {
-
+    const newRes = req.body
+    const { id } = req.params
+    Projects.findById(id)
+        .then(project => {
+            project
+            ? Projects.addResource(newRes, id)
+                .then(resource => {
+                    res.status(201).json(resource)
+                })
+            : res.status(404).json({ message: "could not find project" })
+        })
+        .catch(err => {
+            res.status(500).json({ message: "cannot create new resource" })
+        })
 })
 
 router.post('/:id/tasks', (req, res) => {
-
+    const newTask = req.body
+    const { id } = req.params
+    Projects.findById(id)
+        .then(project => {
+            project
+            ? Projects.addTask(newTask, id)
+                .then(task => {
+                    res.status(201).json(task)
+                })
+            : res.status(404).json({ message: "could not find project" })
+        })
+        .catch(err => {
+            res.status(500).json({ message: "cannot create new task" })
+        })
 })
 
 router.put('/:id', (req, res) => {
